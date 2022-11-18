@@ -22,11 +22,11 @@ const DeliveryList = () => {
         {deliveries &&
           deliveries.map((delivery) => (
             <tr key={delivery.deliveryId}>
-              <th>{delivery.deliveryId}</th>
-              <th>{delivery.originLocationId}</th>
-              <th>{delivery.destinationLocationId}</th>
-              <th>{delivery.resourceIds.length}</th>
-              <th>
+              <td>{delivery.deliveryId}</td>
+              <td>{delivery.originLocationId}</td>
+              <td>{delivery.destinationLocationId}</td>
+              <td>{delivery.resourceIds.length}</td>
+              <td>
                 <div className="form-check form-switch">
                   {delivery.deliveryStatus === "delivered" ? (
                     <input
@@ -43,7 +43,7 @@ const DeliveryList = () => {
                     />
                   )}
                 </div>
-              </th>
+              </td>
             </tr>
           ))}
       </tbody>
