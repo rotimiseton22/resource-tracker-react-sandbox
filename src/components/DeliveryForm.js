@@ -38,7 +38,7 @@ const DeliveryForm = () => {
                 </option>
               ))}
           </select>
-
+          <br />
           <label className="form-label">Destination</label>
           <select
             className="form-select"
