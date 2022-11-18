@@ -6,7 +6,8 @@ export default function App() {
   return (
     <div className="container">
       <DeliveryForm />
-      <h1>Deliveries</h1>
+      <hr />
+      <h4>Deliveries</h4>
       <DeliveryList />
     </div>
   );
