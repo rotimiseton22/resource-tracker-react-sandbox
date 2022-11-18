@@ -1,67 +1,76 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useFetch } from "../fetchData";
 
 const DeliveryForm = () => {
-  let [allLocations, setAllLocations] = useState([]);
-  let [resourcesAtLocation, setResourcesAtLocation] = useState([]);
   let [deliveryOrigin, setDeliveryOrigin] = useState("");
   let [deliveryDestination, setDeliveryDestination] = useState("");
 
-  const getLocations = async () => {
-    let locations_data = await fetch("./data/locations.json");
-    let response = await locations_data.json();
-    setAllLocations(response.locations);
-  };
+  let [locationsLoading, allLocations, locationsError] = useFetch(
+    "./data/locations.json"
+  );
 
-  const getResources = async () => {
-    let resources_data = await fetch("./data/resources.json");
-    let response = await resources_data.json();
-    setResourcesAtLocation(response.resources);
-  };
+  let [resourcesLoading, allResources, resourcesError] = useFetch(
+    "./data/resources.json"
+  );
 
-  useEffect(() => {
-    getLocations();
-    getResources();
-  }, []);
+  if (locationsLoading || resourcesLoading) return <h1>Retrieving Data....</h1>;
+  if (locationsError || resourcesError)
+    return <pre>{locationsError || resourcesError}</pre>;
+  let { locations } = allLocations;
+  let { resources } = allResources;
 
   return (
     <form>
-      <select
-        name="Origin"
-        value={deliveryOrigin}
-        onChange={(e) => setDeliveryOrigin(e.target.value)}
-      >
-        {allLocations &&
-          allLocations.map((location) => (
-            <option key={location.locationId} value={location.locationId}>
-              {location.name}
-            </option>
-          ))}
-      </select>
-      <br />
-      <select
-        name="Destination"
-        value={deliveryDestination}
-        onChange={(e) => setDeliveryDestination(e.target.value)}
-      >
-        {allLocations &&
-          allLocations
-            .filter((location) => location.locationId !== deliveryOrigin)
-            .map((location) => (
+      <div className="mb-3">
+        <label className="form-label">Origin</label>
+        <select
+          className="form-select"
+          name="origin"
+          value={deliveryOrigin}
+          onChange={(e) => setDeliveryOrigin(e.target.value)}
+        >
+          {locations &&
+            locations.map((location) => (
               <option key={location.locationId} value={location.locationId}>
                 {location.name}
               </option>
             ))}
-      </select>
-      <br />
-      {resourcesAtLocation &&
-        resourcesAtLocation
-          .filter((resource) => resource.lastLocationId === deliveryOrigin)
-          .map((resource) => (
-            <label key={resource.id}>
-              {resource.id}
-              <input type="checkbox" value={resource.id} />
-            </label>
-          ))}
+        </select>
+
+        <label className="form-label">Destination</label>
+        <select
+          className="form-select"
+          name="destination"
+          value={deliveryDestination}
+          onChange={(e) => setDeliveryDestination(e.target.value)}
+        >
+          {locations &&
+            locations
+              .filter((location) => location.locationId !== deliveryOrigin)
+              .map((location) => (
+                <option key={location.locationId} value={location.locationId}>
+                  {location.name}
+                </option>
+              ))}
+        </select>
+      </div>
+      <div className="mb-3">
+        {resources &&
+          resources
+            .filter((resource) => resource.lastLocationId === deliveryOrigin)
+            .map((resource) => (
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  value={resource.id}
+                  className="form-check-input"
+                />
+                <label key={resource.id} className="form-check-label">
+                  {resource.id}
+                </label>
+              </div>
+            ))}
+      </div>
     </form>
   );
 };
